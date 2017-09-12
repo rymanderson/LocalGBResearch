@@ -1,0 +1,36 @@
+# ------------------------ INITIALIZATION ----------------------------
+clear
+units 		metal
+dimension	3
+boundary	p	s	p
+atom_style	atomic
+# ----------------------- ATOM DEFINITION ----------------------------
+lattice		fcc 4
+region		myRegion block 0 10 0 10 0 10
+create_box	1 myRegion
+read_dump al.mishin.twist.110.3.txt 10490 x y z scaled yes box yes replace yes add yes 
+# ------------------------ FORCE FIELDS ------------------------------
+pair_style	eam/alloy
+pair_coeff	* * Al99.eam.alloy Al
+neighbor 2.0 bin 
+neigh_modify delay 5 check yes 
+
+# ------------------------- SETTINGS ---------------------------------
+compute csp all centro/atom fcc
+compute cna all cna/atom 2
+
+######################################
+
+# RUN MINIMIZATIONS
+reset_timestep	0
+
+#thermo 10
+#thermo_style custom 
+
+dump dumpGTA all custom 1 dumpGTA_*.out x y z c_cna c_csp
+
+run		0
+
+######################################
+# SIMULATION DONE
+print "All done"

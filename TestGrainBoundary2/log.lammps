@@ -1,0 +1,104 @@
+LAMMPS (26 Jan 2017-ICMS)
+OMP_NUM_THREADS environment is not set. Defaulting to 1 thread. (../comm.cpp:90)
+  using 1 OpenMP thread(s) per MPI task
+# ------------------------ INITIALIZATION ----------------------------
+clear
+OMP_NUM_THREADS environment is not set. Defaulting to 1 thread. (../comm.cpp:90)
+  using 1 OpenMP thread(s) per MPI task
+units 		metal
+dimension	3
+boundary	p	s	p
+atom_style	atomic
+# ----------------------- ATOM DEFINITION ----------------------------
+lattice		fcc 4
+Lattice spacing in x,y,z = 4 4 4
+region		myRegion block 0 10 0 10 0 10
+create_box	1 myRegion
+Created orthogonal box = (0 0 0) to (40 40 40)
+  1 by 1 by 1 MPI processor grid
+read_dump al.mishin.twist.110.3.txt 10490 x y z scaled yes box yes replace yes add yes
+  orthogonal box = (0 -72.165 0) to (14.0296 72.2095 9.92043)
+  0 atoms before read
+  1220 atoms in snapshot
+  0 atoms purged
+  0 atoms replaced
+  0 atoms trimmed
+  1220 atoms added
+  1220 atoms after read
+# ------------------------ FORCE FIELDS ------------------------------
+pair_style	eam/alloy
+pair_coeff	* * Al99.eam.alloy Al
+neighbor 2.0 bin
+neigh_modify delay 5 check yes
+
+# ------------------------- SETTINGS ---------------------------------
+compute csp all centro/atom fcc
+compute cna all cna/atom 2
+
+######################################
+
+# RUN MINIMIZATIONS
+reset_timestep	0
+
+#thermo 10
+#thermo_style custom
+
+dump dumpGTA all custom 1 dumpGTA_*.out x y z c_cna c_csp
+
+run		0
+WARNING: No fixes defined, atoms won't move (../verlet.cpp:55)
+Neighbor list info ...
+  update every 1 steps, delay 5 steps, check yes
+  max neighbors/atom: 2000, page size: 100000
+  master list distance cutoff = 8.28721
+  ghost atom cutoff = 8.28721
+  binsize = 4.1436, bins = 4 35 3
+  3 neighbor lists, perpetual/occasional/extra = 1 2 0
+  (1) pair eam/alloy, half, perpetual
+      pair build: half/bin/newton
+      stencil: half/bin/3d/newton
+      bin: standard
+  (2) compute centro/atom, full, occasional
+      pair build: full/bin
+      stencil: full/bin/3d
+      bin: standard
+  (3) compute cna/atom, full, occasional
+      pair build: full/bin
+      stencil: full/bin/3d
+      bin: standard
+Memory usage per processor = 8.27088 Mbytes
+Step Temp E_pair E_mol TotEng Press Volume 
+       0            0   -4078.3795            0   -4078.3795   -963.32099    20094.005 
+Loop time of 0 on 1 procs for 0 steps with 1220 atoms
+
+0.0% CPU use with 1 MPI tasks x 1 OpenMP threads
+
+MPI task timing breakdown:
+Section |  min time  |  avg time  |  max time  |%varavg| %total
+---------------------------------------------------------------
+Pair    | 0          | 0          | 0          |   0.0 |  0.00
+Neigh   | 0          | 0          | 0          |   0.0 |  0.00
+Comm    | 0          | 0          | 0          |   0.0 |  0.00
+Output  | 0          | 0          | 0          |   0.0 |  0.00
+Modify  | 0          | 0          | 0          |   0.0 |  0.00
+Other   |            | 0          |            |       |  0.00
+
+Nlocal:    1220 ave 1220 max 1220 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Nghost:    5819 ave 5819 max 5819 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Neighs:    83504 ave 83504 max 83504 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+FullNghs:  167008 ave 167008 max 167008 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+
+Total # of neighbors = 167008
+Ave neighs/atom = 136.892
+Neighbor list builds = 0
+Dangerous builds = 0
+
+######################################
+# SIMULATION DONE
+print "All done"
+All done
+Total wall time: 0:00:00
